@@ -16,7 +16,8 @@ function apprise(string, args, callback)
 		'textCancel'	:	'Cancel',	// Cancel button default text
 		'textYes'		:	'Yes',		// Yes button default text
 		'textNo'		:	'No',		// No button default text
-		'password'		:	false		// password input (can be true or string for default password)
+		'password'		:	false,		// password input (can be true or string for default password)
+		'textarea'		:	false		// textarea input (can be true or string for default textarea)
 		}
 	
 	if(args) 
@@ -50,23 +51,31 @@ function apprise(string, args, callback)
     
     if(args)
 	{
-	if(args['input'] || args['password'])
+		var obj = '';
+		if(args['input'] || args['password'])
 		{
-		var inputType = args['password']?"password":"text";
-		if (inputType=="password"){
+		  var inputType = args['password']?"password":"text";
+		  if (inputType=="password"){
 			inputValue = typeof(args['password'])=='string'?args['password']:"";
-		}else{
+		  }else{
 			inputValue = typeof(args['input'])=='string'?args['input']:"";
+		  }
+		  obj = '<input type="'+inputType+'" class="aTextbox" t="aTextbox" value="'+inputValue+'" />';
+		} else if(args['textarea']) {
+			inputValue = typeof(args['textarea'])=='string'?args['textarea']:"";
+			obj = '<textarea class="aTextbox" t="aTextbox">' + inputValue + '</textarea>';
 		}
-		$('.appriseInner').append('<div class="aInput"><input type="'+inputType+'" class="aTextbox" t="aTextbox" value="'+inputValue+'" /></div>');
-		$('.aTextbox').focus();
+		
+		if (obj !== '') {
+		  $('.appriseInner').append('<div class="aInput">' + obj + '</div>');
+		  $('.aTextbox').focus();
 		}
 	}
 	
     $('.appriseInner').append('<div class="aButtons"></div>');
     if(args)
     	{
-		if(args['confirm'] || args['input'] || args['password'])
+		if(args['confirm'] || args['input'] || args['password'] || args['textarea'])
 			{ 
 			$('.aButtons').append('<button value="ok">'+args['textOk']+'</button>');
 			$('.aButtons').append('<button value="cancel">'+args['textCancel']+'</button>'); 
@@ -109,7 +118,7 @@ function apprise(string, args, callback)
 				{ 
 				if(args)
 					{
-					if(args['input'] || args['password'])
+					if(args['input'] || args['password'] || args['textarea'])
 						{ callback(aText); }
 					else
 						{ callback(true); }
